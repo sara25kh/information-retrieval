@@ -197,23 +197,24 @@ def preprocess_data(data):
 
 def preprocess_query(query):
     tokenize_query = custom_normalize(tokenize(query))
-    stemmed_words =stemming(convert_list(tokenize_query))
+    stemmed_words =stemming(tokenize_query)
     return stemmed_words
 
-# Load the data
-documents = Load_Docs()
+if __name__ == "__main__":
+    # Load the data
+    documents = Load_Docs()
 
-# Preprocess the data
-preprocessed_data = preprocess_data(documents)
+    # Preprocess the data
+    preprocessed_data = preprocess_data(documents)
 
-# Save preprocessed data as a JSON file
-output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
-with open(output_file_path, 'w', encoding='utf-8') as f:
-    json.dump(preprocessed_data, f, ensure_ascii=False, indent=4)
+    # Save preprocessed data as a JSON file
+    output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
+    with open(output_file_path, 'w', encoding='utf-8') as f:
+        json.dump(preprocessed_data, f, ensure_ascii=False, indent=4)
 
-print("Preprocessing completed. Preprocessed data saved to:", output_file_path)
+    print("Preprocessing completed. Preprocessed data saved to:", output_file_path)
 
-#print(preprocess_query("سحر ناز"))
+    #print(preprocess_query("سحر ناز"))
 '''''
 # Print the overall top 50 frequent words
 print("Overall Top 50 Frequent Words:")

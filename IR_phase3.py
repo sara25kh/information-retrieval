@@ -6,6 +6,7 @@ import re
 import math
 import numpy as np
 from IR_phase1 import preprocess_query , convert , convert_list
+from unidecode import unidecode
 
 data = {}
 positional_index_dic = {}
@@ -123,13 +124,22 @@ def calculate_query_vector(query):
         tf_query[term] += 1
 
     # Calculate inverse document frequency (idf) for each query term
+    # print(positional_index_dic['فوتبال']['1053'])
     idf_query = {}
+    test = ''
     for term in tf_query:
+        print(term.encode().decode())
+        test = term
+        # print('positional_index_dic', positional_index_dic.keys())
         if term in positional_index_dic:
+            print('step2')
             nt = positional_index_dic[term]['total']['count']
             idf_query[term] = math.log(N / nt)
         else:
+            print('step1')
             idf_query[term] = 0  # Term not found in the positional index, assign idf as 0
+    
+    print('idf_query', idf_query[test])
 
     # Calculate query term weight (tf-idf)
     query_vector = {}
@@ -256,14 +266,16 @@ def toPrint(sorted_docs):
         raw = data.get(docID)
         title = data[docID]['title']
         url = data[docID]['url']
-        print(f'{i + 1}. DocID = {docID}  \n   Title = {title} \n   URL   = {url}')
+        print(f'{i + 1}. DocID = {docID}  \n   Title = {convert(title)} \n   URL   = {convert(url)}')
         i += 1
 
 
 def queryProcessor(query, mode):
     global positional_index_dic, postings_list
     # preprocess query
+    print(query)
     preprocessed_query = preprocess_query(query)
+    print(preprocess_query)
     # calculating tf-idf
     query_tfidf = calculate_query_vector(preprocessed_query)
     # normalize query
@@ -311,27 +323,37 @@ def queryProcessor(query, mode):
         
 
 def convert_input(input_str):
-    # Assuming your input is in a different encoding, replace 'input_encoding' with the correct encoding
-    input_encoding = 'latin-1'  # Change this to the correct encoding if needed
-    output_encoding = 'utf-8'   # Desired output encoding
+    # Desired output encoding
+    converted_input = unidecode(input_str)
+    return converted_input
+    ''' output_encoding = 'utf-8'   # Change this to the desired encoding
 
     try:
-        # Decode the input using the specified encoding
-        decoded_input = input_str.encode(input_encoding).decode(output_encoding)
+        # Encode the input using utf-8
+        encoded_input = input_str.encode('utf-8')
+        # Decode the encoded input using the desired output encoding
+        decoded_input = encoded_input.decode(output_encoding)
         return decoded_input
     except UnicodeEncodeError:
-        # If encoding fails, try to decode using the input encoding directly
-        try:
-            decoded_input = input_str.decode(input_encoding)
-            return decoded_input
-        except UnicodeDecodeError:
-            # If decoding fails, return the original input
-            return input_str
+        # If encoding fails, return the original input
+        return input_str'''
     
+import tkinter as tk
+from tkinter import simpledialog
+
 def main():
-    inputQ = input('Enter Query: ')
-    #converted_input = convert_input(inputQ)
-    #print(f'Converted Input: {converted_input}')
+
+    # # Create the main window
+    # root = tk.Tk()
+    # root.withdraw() 
+
+    
+
+    inputQ = input('Enter Query: \n')
+    # inputQ = simpledialog.askstring("Input", "Enter Query:")
+    # converted_input = convert_input(inputQ)
+    # inputQ = 'مهر'
+    print(f'Input: {inputQ}')
     openFiles()
     queryProcessor(inputQ, 1)
 
