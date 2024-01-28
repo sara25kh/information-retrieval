@@ -182,7 +182,7 @@ def preprocess_data(data):
     for word, frq in top_frequent_words_with_frq:
         # print('info', info)
         print(f"{convert(word)}: {frq}")
-        
+
     # Apply stemming to the 'content' field
     preprocessed_data = {}
     for doc_id, doc in data.items():
@@ -194,6 +194,11 @@ def preprocess_data(data):
         }
     
     return preprocessed_data
+
+def preprocess_query(query):
+    tokenize_query = custom_normalize(tokenize(query))
+    stemmed_words =stemming(convert_list(tokenize_query))
+    return stemmed_words
 
 # Load the data
 documents = Load_Docs()
@@ -208,6 +213,7 @@ with open(output_file_path, 'w', encoding='utf-8') as f:
 
 print("Preprocessing completed. Preprocessed data saved to:", output_file_path)
 
+#print(preprocess_query("سحر ناز"))
 '''''
 # Print the overall top 50 frequent words
 print("Overall Top 50 Frequent Words:")
@@ -253,6 +259,5 @@ print(normalized_tokens)"""
 #original_tokens = ["یکی", "از", "مهم ترین", "اعداد", "6", "ترین", "گری", "ام", "می", "کند."]
 #normalized_tokens = normalize(original_tokens)
 #print(convert_list(normalized_tokens))
-#print(convert_list(tokenize('امید‌بیب چقد خوشگله')))
-#li = convert_list(tokenize('امید چقد تر خوشگله'))
+
 
