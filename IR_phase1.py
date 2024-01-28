@@ -160,15 +160,55 @@ def process_document(doc_id, doc):
     #print('processing doc', doc)
     return custom_normalize(tokenize(doc['content']))
 
-documents = Load_Docs()
+#documents = Load_Docs()
 #print('document length', len(documents.items()))
-tokenized_docs = {doc_id: process_document(doc_id, doc) for doc_id, doc in documents.items()}
-
+#tokenized_docs = {doc_id: process_document(doc_id, doc) for doc_id, doc in documents.items()}
 
 # Example usage
-updated_documents, deleted_words_info, overall_top_frequent_words, top_frequent_words_with_frq = delete_frequent_words(tokenized_docs)
+#updated_documents, deleted_words_info, overall_top_frequent_words, top_frequent_words_with_frq = delete_frequent_words(tokenized_docs)
+def preprocess_data(data):
+    # Tokenize and normalize
+    tokenized_docs = {doc_id: process_document(doc_id, doc) for doc_id, doc in data.items()}
+    
+    # Delete top 50 frequent words
+    updated_documents, deleted_words_info, overall_top_frequent_words, top_frequent_words_with_frq = delete_frequent_words(tokenized_docs)
+    
+    # Print the overall top 50 frequent words
+    print("Overall Top 50 Frequent Words:")
+    print(convert_list(overall_top_frequent_words))
 
+    # Print the list of deleted words and their frequencies
+    print("Deleted words:")
+    for word, frq in top_frequent_words_with_frq:
+        # print('info', info)
+        print(f"{convert(word)}: {frq}")
+        
+    # Apply stemming to the 'content' field
+    preprocessed_data = {}
+    for doc_id, doc in data.items():
+        preprocessed_content = stemming(updated_documents[doc_id])
+        preprocessed_data[doc_id] = {
+            'title': doc['title'],
+            'content': preprocessed_content,  # Replace 'content' with the preprocessed tokens
+            'url': doc['url']
+        }
+    
+    return preprocessed_data
 
+# Load the data
+documents = Load_Docs()
+
+# Preprocess the data
+preprocessed_data = preprocess_data(documents)
+
+# Save preprocessed data as a JSON file
+output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
+with open(output_file_path, 'w', encoding='utf-8') as f:
+    json.dump(preprocessed_data, f, ensure_ascii=False, indent=4)
+
+print("Preprocessing completed. Preprocessed data saved to:", output_file_path)
+
+'''''
 # Print the overall top 50 frequent words
 print("Overall Top 50 Frequent Words:")
 print(convert_list(overall_top_frequent_words))
@@ -180,9 +220,9 @@ for word, frq in top_frequent_words_with_frq:
     print(f"{convert(word)}: {frq}")
 
 
-print("Stemmed Words:" ,stemming(convert_list(overall_top_frequent_words)))
+#print("Stemmed Words:" ,stemming(convert_list(overall_top_frequent_words)))
 
-
+'''
 
 
 
