@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import arabic_reshaper
 from bidi.algorithm import get_display
-import hazm
+#import hazm
 from hazm import *
-import parsivar
+# import parsivar
 from string import punctuation
 import json
 import re
@@ -28,7 +28,7 @@ def convert_list(token_list):
     return converted
 
 
-file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k.json'
+file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k 2.json'
 def Load_Docs(): 
     try:
         f = open(file_path, 'r', encoding='utf-8')
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     preprocessed_data = preprocess_data(documents)
 
     # Save preprocessed data as a JSON file
-    output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
+    output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_preprocessed.json'
     with open(output_file_path, 'w', encoding='utf-8') as f:
         json.dump(preprocessed_data, f, ensure_ascii=False, indent=4)
 

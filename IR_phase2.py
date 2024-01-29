@@ -1,6 +1,6 @@
 import json
 #opening preprocessed file
-file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
+file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_preprocessed.json'
 
 try:
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -39,6 +39,6 @@ for docID, doc in preprocessed_data.items():
 
 # save positional index dic as a JSON file
 print(len(positional_index_dic))
-output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_positional_index_dic.json'
+output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_positional_index_dic.json'
 with open(output_file_path, 'w', encoding='utf-8') as f:
     json.dump(positional_index_dic, f, ensure_ascii=False, indent=4)

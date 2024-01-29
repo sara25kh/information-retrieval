@@ -6,7 +6,7 @@ import re
 import math
 import numpy as np
 from IR_phase1 import preprocess_query , convert , convert_list
-from unidecode import unidecode
+# from unidecode import unidecode
 
 data = {}
 positional_index_dic = {}
@@ -49,7 +49,7 @@ def create_champion_list():
 def openFiles():
     global data, positional_index_dic, N, postings_list, data_preprocessed, docs
     # Opening positional index file
-    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_positional_index_dic.json'
+    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_positional_index_dic.json'
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             positional_index_dic = json.load(f)
@@ -58,7 +58,7 @@ def openFiles():
         print("Error opening file.")
 
     # Opening origin file
-    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k.json'
+    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k 2.json'
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data_raw = json.load(f)
@@ -67,7 +67,7 @@ def openFiles():
         print("Error opening file.")
 
     # Opening preprocessed file
-    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
+    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_preprocessed.json'
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data_preprocessed = json.load(f)
@@ -322,24 +322,9 @@ def queryProcessor(query, mode):
             print(convert('داده ای یافت نشد'))
         
 
-def convert_input(input_str):
-    # Desired output encoding
-    converted_input = unidecode(input_str)
-    return converted_input
-    ''' output_encoding = 'utf-8'   # Change this to the desired encoding
-
-    try:
-        # Encode the input using utf-8
-        encoded_input = input_str.encode('utf-8')
-        # Decode the encoded input using the desired output encoding
-        decoded_input = encoded_input.decode(output_encoding)
-        return decoded_input
-    except UnicodeEncodeError:
-        # If encoding fails, return the original input
-        return input_str'''
     
-import tkinter as tk
-from tkinter import simpledialog
+# import tkinter as tk
+# from tkinter import simpledialog
 
 def main():
 
