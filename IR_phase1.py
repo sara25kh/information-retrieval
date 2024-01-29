@@ -158,7 +158,8 @@ def stemming(updated_documents):
 
 def process_document(doc_id, doc):
     #print('processing doc', doc)
-    return custom_normalize(tokenize(doc['content']))
+    pure_content = re.sub(f'[{punctuation}؟،٪×÷»«]+', '', doc['content'])
+    return custom_normalize(tokenize(pure_content))
 
 #documents = Load_Docs()
 #print('document length', len(documents.items()))
