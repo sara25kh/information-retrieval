@@ -17,6 +17,7 @@ docs = {}
 N = 0
 
 
+
 def tf_idf(nt, ftd):
     global N
     tf = 1 + math.log(ftd) if ftd > 0 else 0
@@ -49,7 +50,7 @@ def create_champion_list():
 def openFiles():
     global data, positional_index_dic, N, postings_list, data_preprocessed, docs
     # Opening positional index file
-    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_positional_index_dic.json'
+    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_positional_index_dic.json'
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             positional_index_dic = json.load(f)
@@ -58,7 +59,7 @@ def openFiles():
         print("Error opening file.")
 
     # Opening origin file
-    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k 2.json'
+    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k.json'
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data_raw = json.load(f)
@@ -67,7 +68,7 @@ def openFiles():
         print("Error opening file.")
 
     # Opening preprocessed file
-    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_preprocessed.json'
+    file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data_preprocessed = json.load(f)
@@ -86,7 +87,7 @@ def openFiles():
     # print('Creating docs..')
     for docID, d in data_preprocessed.items():
         docs[docID] = d['content']
-
+    max_tfidf = 0
     for term, postings in positional_index_dic.items():
         if term not in postings_list:
             postings_list[term] = []
@@ -95,7 +96,11 @@ def openFiles():
             if docID != 'total':
                 ftd = da['count']
                 tfidf = tf_idf(nt, ftd)
+                if max_tfidf > (tfidf):
+                    print('max_tfidf:' , max_tfidf)
                 postings_list[term].append({'docID': docID, 'tfidf': tfidf})
+
+   
 
     # Creating champion list from positional index
     create_champion_list()
@@ -111,6 +116,7 @@ def normalize_vector(input):
         # Handle the zero norm case (e.g., return a special value or raise an exception)
         return vector
     normalized_vector = [x / norm for x in vector]
+    # normalized_vector = [x for x in vector]
     return normalized_vector
 
 
@@ -124,22 +130,17 @@ def calculate_query_vector(query):
         tf_query[term] += 1
 
     # Calculate inverse document frequency (idf) for each query term
-    # print(positional_index_dic['فوتبال']['1053'])
+    
     idf_query = {}
-    test = ''
+
     for term in tf_query:
-        print(term.encode().decode())
-        test = term
-        # print('positional_index_dic', positional_index_dic.keys())
         if term in positional_index_dic:
-            print('step2')
             nt = positional_index_dic[term]['total']['count']
             idf_query[term] = math.log(N / nt)
         else:
-            print('step1')
             idf_query[term] = 0  # Term not found in the positional index, assign idf as 0
     
-    print('idf_query', idf_query[test])
+   
 
     # Calculate query term weight (tf-idf)
     query_vector = {}
@@ -149,22 +150,6 @@ def calculate_query_vector(query):
         query_vector[term] = tfidf
 
     return query_vector
-
-
-'''def calc_vectors_by_champion(query):
-    global postings_list, docs, champion_list
-    doc_vectors = {}
-    for term in query.items():
-        docs_list = champion_list[term[0]]
-        for docID in docs_list:
-            if docID not in doc_vectors:
-                doc_vectors[docID] = {}
-            for t in docs.get(docID):
-                docs_of_term = postings_list[t]
-                for d in range(len(docs_of_term)):
-                    if docs_of_term[d]['docID'] == docID:
-                        doc_vectors[docID][t] = docs_of_term[d]['tfidf']
-    return doc_vectors'''
 
 
 def calc_vectors(query):
@@ -198,15 +183,7 @@ def calc_vectors_cosine_by_champion(query):
                 for i in range(len(tf_idf_list)):
                     if tf_idf_list[i]['docID'] == docID:
                         doc_vectors[docID][term_key] = tf_idf_list[i]['tfidf']
-        '''tf_idf_list = postings_list[term[0]]
-        docs_list = champion_list[term[0]]
-        for docID in docs_list:
-            if docID not in doc_vectors:
-                doc_vectors[docID] = {}
-            for i in range(len(tf_idf_list)):
-                if tf_idf_list[i]['docID'] == docID:
-                    doc_vectors[docID][term[0]] = tf_idf_list[i]['tfidf']'''
-
+        
     for term, l in query.items():
         for docID, list in doc_vectors.items():
             if term not in list:
@@ -230,7 +207,6 @@ def calc_vectors_cosine(query):
         for docID, list in doc_vectors.items():
             if term not in list:
                 doc_vectors[docID][term] = 0
-    #
     return doc_vectors
 
 
@@ -260,17 +236,22 @@ def cosine_similarity(query_vector, doc_vectors):
 def toPrint(sorted_docs):
     global data
     i = 0
+    j = 0
+
     for doc in sorted_docs:
-        docID = doc[0]
-        score = doc[1]
-        raw = data.get(docID)
-        title = data[docID]['title']
-        url = data[docID]['url']
-        print(f'{i + 1}. DocID = {docID}  \n   Title = {convert(title)} \n   URL   = {convert(url)}')
-        i += 1
+        if j < 10:
+            docID = doc[0]
+            score = doc[1]
+            raw = data.get(docID)
+            title = data[docID]['title']
+            url = data[docID]['url']
+            print(f'{i + 1}. DocID = {docID}  \n   Title = {convert(title)} \n   URL   = {convert(url)}')
+            i += 1
+            j = j + 1
+            
 
 
-def queryProcessor(query, mode):
+def queryProcessor(query, mode ):
     global positional_index_dic, postings_list
     # preprocess query
     print(query)
@@ -281,6 +262,7 @@ def queryProcessor(query, mode):
     # normalize query
     normalized_query_vector = {}
     normalized_query_vector = normalize_vector(query_tfidf)
+    
     if mode == 0:  # without champion list
         print('ALL DATA')
         # calculating available docs tf-idf
@@ -290,13 +272,16 @@ def queryProcessor(query, mode):
         docs_vectors_eliminated = calc_vectors_cosine(query_tfidf)
         # normalize doc vectors
         normalized_docs_vector = {}
+       
         for docID, vector in docs_vectors_eliminated.items():
             normalized_docs_vector[docID] = normalize_vector(vector)
         c_sim = cosine_similarity(normalized_query_vector, normalized_docs_vector)
-
+        J = 10
+        print('j: ', J)
         print('RESULTS BY COSINE SIMILARITY:')
         if len(c_sim) > 0:
             toPrint(c_sim)
+            
         else:
             print('داده ای یافت نشد')
         print('************************************************************************************')
@@ -323,21 +308,8 @@ def queryProcessor(query, mode):
         
 
     
-# import tkinter as tk
-# from tkinter import simpledialog
-
 def main():
-
-    # # Create the main window
-    # root = tk.Tk()
-    # root.withdraw() 
-
-    
-
     inputQ = input('Enter Query: \n')
-    # inputQ = simpledialog.askstring("Input", "Enter Query:")
-    # converted_input = convert_input(inputQ)
-    # inputQ = 'مهر'
     print(f'Input: {inputQ}')
     openFiles()
     queryProcessor(inputQ, 1)

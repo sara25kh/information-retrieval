@@ -28,7 +28,7 @@ def convert_list(token_list):
     return converted
 
 
-file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k 2.json'
+file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k.json'
 def Load_Docs(): 
     try:
         f = open(file_path, 'r', encoding='utf-8')
@@ -39,10 +39,11 @@ def Load_Docs():
         print("Error opening file.")
 
     data = {}
+    i = 0
     for docID, body in data_raw.items():
         data[docID] = {}
         data[docID]['title'] = body['title']
-        data[docID]['content'] = body['content']
+        data[docID]['content'] = body['content']       
         data[docID]['url'] = body['url']
 
     return data    
@@ -110,7 +111,7 @@ def custom_normalize(tokens):
                 normalized_tokens.append(current_token)
 
             # Check if the current token ends with specific suffixes and fix spacing
-            for suffix in {"ی", "ای", "ها", "های", "هایی", "تر", "تری", "ترین", "گر", "گری", "ام", "ات", "اش"}:
+            for suffix in { "ها",  "هایی", "تر", "تری", "ترین",  "گری", "ات", "اش"}:
                 if current_token.endswith(suffix):
                     # Separate the suffix with the previous part using half space
                     normalized_tokens[-1] = normalized_tokens[-1][:-1 * len(suffix)] + '\u200c' + suffix    
@@ -140,7 +141,7 @@ def delete_frequent_words(tokenized_docs):
         'deleted_words': [],
         'deleted_words_frequencies': {}
     }
-
+    i = 0
     # Remove top 50 frequent words from each document
     for doc_id, tokens in tokenized_docs.items():
         updated_tokens = [token for token in tokens if token not in top_frequent_words]
@@ -161,9 +162,6 @@ def process_document(doc_id, doc):
     pure_content = re.sub(f'[{punctuation}؟،٪×÷»«]+', '', doc['content'])
     return custom_normalize(tokenize(pure_content))
 
-#documents = Load_Docs()
-#print('document length', len(documents.items()))
-#tokenized_docs = {doc_id: process_document(doc_id, doc) for doc_id, doc in documents.items()}
 
 # Example usage
 #updated_documents, deleted_words_info, overall_top_frequent_words, top_frequent_words_with_frq = delete_frequent_words(tokenized_docs)
@@ -186,6 +184,7 @@ def preprocess_data(data):
 
     # Apply stemming to the 'content' field
     preprocessed_data = {}
+    # i = 0
     for doc_id, doc in data.items():
         preprocessed_content = stemming(updated_documents[doc_id])
         preprocessed_data[doc_id] = {
@@ -193,7 +192,6 @@ def preprocess_data(data):
             'content': preprocessed_content,  # Replace 'content' with the preprocessed tokens
             'url': doc['url']
         }
-    
     return preprocessed_data
 
 def preprocess_query(query):
@@ -204,33 +202,21 @@ def preprocess_query(query):
 if __name__ == "__main__":
     # Load the data
     documents = Load_Docs()
-
     # Preprocess the data
     preprocessed_data = preprocess_data(documents)
 
     # Save preprocessed data as a JSON file
-    output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_5k_preprocessed.json'
+    output_file_path = '/Users/sara/Desktop/amirkabir/fall02-03/Information Retrieval/project/IR_data_news_12k_preprocessed.json'
     with open(output_file_path, 'w', encoding='utf-8') as f:
         json.dump(preprocessed_data, f, ensure_ascii=False, indent=4)
 
     print("Preprocessing completed. Preprocessed data saved to:", output_file_path)
 
-    #print(preprocess_query("سحر ناز"))
-'''''
-# Print the overall top 50 frequent words
-print("Overall Top 50 Frequent Words:")
-print(convert_list(overall_top_frequent_words))
-
-# Print the list of deleted words and their frequencies
-print("Deleted words:")
-for word, frq in top_frequent_words_with_frq:
-    # print('info', info)
-    print(f"{convert(word)}: {frq}")
 
 
-#print("Stemmed Words:" ,stemming(convert_list(overall_top_frequent_words)))
 
-'''
+
+ 
 
 
 
@@ -238,28 +224,5 @@ for word, frq in top_frequent_words_with_frq:
 
 
 
-
-
-
-
-
-
-
-
-
-""" Example usage
-input_string = "امید چقد تر خوشگله می روم مطالعه میکنم نمیآیم میخواهم"
-tokens = tokenize(input_string)
-normalized_tokens = convert_list(custom_normalize(tokens))
-#result = ' '.join(normalized_tokens)
-print(normalized_tokens)"""
-
-
-
-#print(convert_list(normalized_tokens))
-#print(normalize(tokenize('salam  va omid  tgr \n efv5b 67')))
-#original_tokens = ["یکی", "از", "مهم ترین", "اعداد", "6", "ترین", "گری", "ام", "می", "کند."]
-#normalized_tokens = normalize(original_tokens)
-#print(convert_list(normalized_tokens))
 
 
